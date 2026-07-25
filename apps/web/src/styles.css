@@ -1,0 +1,647 @@
+/*
+ * Logical properties only — `margin-inline`, `padding-block`, `inset-inline-start`,
+ * `text-align: start`. No `margin-left`, no `left: 0`. Adding Hebrew or Arabic later is
+ * then a `dir` flip plus a translation layer, not a sweep through every rule.
+ * SPEC §4, Assumption 8.
+ */
+
+:root {
+  --ink: #16181d;
+  --ink-soft: #5b626e;
+  --line: #dfe3ea;
+  --surface: #ffffff;
+  --canvas: #f5f6f8;
+  --accent: #2f5bd7;
+  --danger: #b4232b;
+  --ok: #1c7a4a;
+  --radius: 6px;
+
+  color-scheme: light;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  color: var(--ink);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--canvas);
+}
+
+button {
+  font: inherit;
+  padding-block: 0.5rem;
+  padding-inline: 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.button--quiet {
+  background: transparent;
+  color: var(--accent);
+  border-color: var(--line);
+}
+
+input,
+select {
+  font: inherit;
+  padding-block: 0.45rem;
+  padding-inline: 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: inherit;
+}
+
+/* Layout ------------------------------------------------------------------ */
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  block-size: 100dvh;
+}
+
+.shell__body {
+  flex: 1;
+  min-block-size: 0;
+  padding: 1.25rem;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-block: 0.75rem;
+  padding-inline: 1.25rem;
+  background: var(--surface);
+  border-block-end: 1px solid var(--line);
+}
+
+.topbar__brand {
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.topbar__nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.topbar__nav a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  padding-block: 0.25rem;
+  border-block-end: 2px solid transparent;
+}
+
+.topbar__nav a[aria-current='page'] {
+  color: var(--ink);
+  border-block-end-color: var(--accent);
+}
+
+.topbar__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+}
+
+.topbar__dot {
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.topbar__live--on {
+  color: var(--ok);
+}
+
+.topbar__live--off {
+  color: #b5761f;
+}
+
+.topbar__account {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+/* Auth -------------------------------------------------------------------- */
+
+.auth {
+  display: grid;
+  place-items: center;
+  min-block-size: 100dvh;
+  padding: 1.5rem;
+}
+
+.auth__card {
+  inline-size: min(26rem, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.75rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.auth__card h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.25rem;
+}
+
+.auth__aside {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  text-align: start;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+}
+
+.field--inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.field span {
+  color: var(--ink-soft);
+}
+
+.field small {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+
+.field__error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+/* Pages ------------------------------------------------------------------- */
+
+.page {
+  max-inline-size: 60rem;
+  margin-inline: auto;
+}
+
+.page h1 {
+  font-size: 1.15rem;
+}
+
+.page__empty {
+  max-inline-size: 32rem;
+  margin-inline: auto;
+  margin-block-start: 3rem;
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  text-align: start;
+  color: var(--ink-soft);
+}
+
+.page__empty h2 {
+  margin-block-start: 0;
+  color: var(--ink);
+  font-size: 1.05rem;
+}
+
+.resource-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.75rem;
+  padding: 1rem;
+  margin-block-end: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table th,
+.table td {
+  text-align: start;
+  padding-block: 0.6rem;
+  padding-inline: 0.9rem;
+  border-block-end: 1px solid var(--line);
+  font-size: 0.92rem;
+}
+
+.table th {
+  color: var(--ink-soft);
+  font-weight: 550;
+}
+
+.table__row--muted td {
+  color: var(--ink-soft);
+}
+
+/* Calendar ---------------------------------------------------------------- */
+
+.calendar-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  block-size: 100%;
+}
+
+.calendar-page__bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.calendar-page__zone {
+  margin: 0;
+  margin-inline-start: auto;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+.calendar {
+  flex: 1;
+  min-block-size: 32rem;
+  padding: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+/* A block the server has not confirmed yet. */
+.rbc-event--pending {
+  opacity: 0.55;
+  border-style: dashed !important;
+}
+
+/*
+ * Outside opening hours. Shaded from the same windows the server enforces with, so a
+ * greyed slot is exactly a slot that would be refused.
+ */
+.rbc-slot--closed {
+  background: repeating-linear-gradient(135deg, #eceef2, #eceef2 6px, #f6f7f9 6px, #f6f7f9 12px);
+}
+
+.calendar-page__link {
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.calendar-page__legend {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+.calendar-page__swatch {
+  inline-size: 1rem;
+  block-size: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: repeating-linear-gradient(135deg, #eceef2, #eceef2 3px, #f6f7f9 3px, #f6f7f9 6px);
+}
+
+.calendar-page__modes {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.calendar-page__body {
+  flex: 1;
+  min-block-size: 0;
+  display: flex;
+  gap: 1rem;
+}
+
+.calendar-page__body > .calendar {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+/* Modal ------------------------------------------------------------------- */
+
+.modal__backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgb(22 24 29 / 42%);
+  z-index: 50;
+}
+
+.modal {
+  inline-size: min(30rem, 100%);
+  max-block-size: calc(100dvh - 3rem);
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: 0 18px 48px rgb(0 0 0 / 22%);
+}
+
+.modal:focus {
+  outline: none;
+}
+
+.modal__head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-block: 1rem;
+  padding-inline: 1.25rem;
+  border-block-end: 1px solid var(--line);
+}
+
+.modal__head h2 {
+  margin: 0;
+  flex: 1;
+  font-size: 1.05rem;
+}
+
+.modal__close {
+  background: transparent;
+  border: 0;
+  color: var(--ink-soft);
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 0 0.25rem;
+  cursor: pointer;
+}
+
+.modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.25rem;
+}
+
+.modal__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.modal__row .field {
+  flex: 1 1 8rem;
+}
+
+.modal__summary {
+  margin: 0;
+  padding-block: 0.6rem;
+  padding-inline: 0.8rem;
+  background: var(--canvas);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+}
+
+.modal__zone {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+.modal__hours {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: end;
+  gap: 0.5rem;
+  margin-block-start: 0.25rem;
+}
+
+textarea {
+  font: inherit;
+  padding-block: 0.45rem;
+  padding-inline: 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: inherit;
+  resize: vertical;
+}
+
+/* Booking detail ---------------------------------------------------------- */
+
+.detail {
+  inline-size: min(20rem, 40vw);
+  flex: none;
+  padding: 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow-y: auto;
+}
+
+.detail__head {
+  display: flex;
+  align-items: start;
+  gap: 0.5rem;
+}
+
+.detail__head h2 {
+  margin: 0;
+  font-size: 1rem;
+  flex: 1;
+}
+
+.detail__close {
+  background: transparent;
+  border: 0;
+  color: var(--ink-soft);
+  font-size: 1.3rem;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.detail__facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.75rem;
+  margin-block: 1rem;
+  font-size: 0.9rem;
+}
+
+.detail__facts dt {
+  color: var(--ink-soft);
+}
+
+.detail__facts dd {
+  margin: 0;
+}
+
+.detail__notes {
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+}
+
+.detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block: 1rem 0.5rem;
+}
+
+.detail__password {
+  font-family: ui-monospace, 'Cascadia Mono', 'Consolas', monospace;
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+  padding: 0.6rem 0.8rem;
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  user-select: all;
+}
+
+.button--danger {
+  background: var(--danger);
+}
+
+/* Availability editor ----------------------------------------------------- */
+
+.page__breadcrumb {
+  margin-block: 0 0.25rem;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+.availability {
+  margin-block-end: 1.5rem;
+  padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.availability--warning {
+  border-color: #e5b93c;
+  background: #fffaf0;
+}
+
+.availability h2 {
+  margin-block-start: 0;
+  font-size: 1rem;
+}
+
+.availability__hint {
+  margin-block: 0 1rem;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+}
+
+.availability__days {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.availability__day {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.availability__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  inline-size: 9.5rem;
+  font-size: 0.92rem;
+}
+
+.availability__dash {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+.exception-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.75rem;
+  margin-block-end: 1rem;
+}
+
+/* Toast ------------------------------------------------------------------- */
+
+.toast {
+  position: fixed;
+  inset-block-end: 1.25rem;
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-inline-size: min(30rem, calc(100vw - 2rem));
+  padding-block: 0.7rem;
+  padding-inline: 1rem;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.92rem;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 18%);
+}
+
+.toast--error {
+  background: var(--danger);
+}
+
+.toast--success {
+  background: var(--ok);
+}
+
+.toast__close {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font-size: 1.15rem;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}

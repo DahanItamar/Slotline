@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: slotline_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # Integration tests provision the three roles themselves from this superuser URL.
+      APP_MIGRATION_DATABASE_URL: postgres://postgres:postgres@localhost:5432/slotline_test
+      APP_DATABASE_URL: postgres://app_tenant:test_password@localhost:5432/slotline_test
+      APP_AUTH_DATABASE_URL: postgres://app_auth:test_password@localhost:5432/slotline_test
+      APP_ORIGIN: http://localhost:5173
+      APP_PORT: '3000'
+      APP_LOG_LEVEL: silent
+      APP_NODE_ENV: test
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test
+      # Catches an import cycle before it becomes a load-order bug nobody can reproduce.
+      - run: npx madge --circular --extensions ts,tsx apps/api/src apps/web/src packages/shared/src
+      - run: npm run build

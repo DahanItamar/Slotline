@@ -1,0 +1,12 @@
+# Normalise to LF in the repository. CI runs on Linux and the repo is developed on
+# Windows; without this every clone crossing platforms churns whole files.
+* text=auto eol=lf
+
+# Binary — never touch these.
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary
+
+# Generated: keep it out of diffs and language statistics.
+package-lock.json linguist-generated=true -diff

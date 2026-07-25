@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 400" width="880" height="400" role="img" aria-label="Two clients submit the same slot at the same moment. Both inserts reach Postgres; the exclusion constraint lets the first commit and rejects the second with SQLSTATE 23P01, which the API returns as 409 SLOT_TAKEN.">
+  <style>
+    .card { fill: #ffffff; stroke: #dfe3ea; stroke-width: 1.5; }
+    .win  { fill: #f1f9f4; stroke: #9ed3b4; stroke-width: 1.5; }
+    .lose { fill: #fdf2f2; stroke: #e8b4b4; stroke-width: 1.5; }
+    .pg   { fill: #f4f7fd; stroke: #c6d4ee; stroke-width: 1.5; }
+    .t    { font-family: ui-sans-serif, system-ui, "Segoe UI", sans-serif; fill: #16181d; }
+    .h    { font-size: 14px; font-weight: 650; }
+    .b    { font-size: 12.5px; fill: #5b626e; }
+    .m    { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 12px; }
+    .ok   { fill: #1c7a4a; }
+    .no   { fill: #b4232b; }
+    .lbl  { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 11px; fill: #5b626e; }
+    .ln   { stroke: #9aa3b2; stroke-width: 1.4; fill: none; }
+  </style>
+  <defs>
+    <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9aa3b2"/>
+    </marker>
+  </defs>
+
+  <rect width="880" height="400" fill="#fbfbfc"/>
+
+  <text class="t h" x="40" y="34">Two people click 10:00 on Room A in the same millisecond</text>
+
+  <!-- clients -->
+  <rect class="card" x="40" y="56" width="300" height="66" rx="9"/>
+  <text class="t h" x="60" y="82">Ada</text>
+  <text class="m" x="60" y="104" fill="#5b626e">POST /api/bookings  10:00–11:00</text>
+
+  <rect class="card" x="540" y="56" width="300" height="66" rx="9"/>
+  <text class="t h" x="560" y="82">Ben</text>
+  <text class="m" x="560" y="104" fill="#5b626e">POST /api/bookings  10:00–11:00</text>
+
+  <path class="ln" d="M190,122 L370,176" marker-end="url(#b)"/>
+  <path class="ln" d="M690,122 L510,176" marker-end="url(#b)"/>
+
+  <!-- postgres -->
+  <rect class="pg" x="150" y="180" width="580" height="94" rx="9"/>
+  <text class="t h" x="176" y="206">Postgres evaluates the constraint at write time</text>
+  <text class="m" x="176" y="232" fill="#2f5bd7">EXCLUDE USING gist (resource_id WITH =, period WITH &amp;&amp;)</text>
+  <text class="m" x="176" y="252" fill="#2f5bd7">  WHERE (status = 'confirmed')</text>
+
+  <path class="ln" d="M300,274 L210,316" marker-end="url(#b)"/>
+  <path class="ln" d="M580,274 L670,316" marker-end="url(#b)"/>
+
+  <!-- outcomes -->
+  <rect class="win" x="40" y="320" width="330" height="60" rx="9"/>
+  <text class="m ok" x="62" y="345">201 Created</text>
+  <text class="t b" x="62" y="366">the booking is Ada’s</text>
+
+  <rect class="lose" x="510" y="320" width="330" height="60" rx="9"/>
+  <text class="m no" x="532" y="345">409 SLOT_TAKEN</text>
+  <text class="t b" x="532" y="366">SQLSTATE 23P01 · Ben sees the winning window</text>
+
+  <text class="t b" x="390" y="352">No application code</text>
+  <text class="t b" x="390" y="370">decided this.</text>
+</svg>
